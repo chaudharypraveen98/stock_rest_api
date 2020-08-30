@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>stock list</title>
+</head>
+<body>
+    <ul>
+      {% for stock in stock_list %}
+        <li>
+          <a href="{% url 'companies:detail' stock.id %}">{{ stock.company_name }}</a>
+        <h2>stock.open_price</h2>
+        </li>
+      {% endfor %}
+    </ul>
+</body>
+</html>
