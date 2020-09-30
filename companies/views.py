@@ -166,7 +166,7 @@ class LogoutApiView(APIView):
 
 class StockViewSet(viewsets.ModelViewSet):
     """
-        This viewset automatically provides `list` and `detail` actions.
+        This viewset automatically provides 'list' and 'detail' actions.
     """
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
