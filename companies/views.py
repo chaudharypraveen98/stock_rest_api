@@ -177,7 +177,7 @@ class StockViewSet(viewsets.ModelViewSet):
     permission_classes = []
     authentication_classes = []
     """
-        This viewset automatically provides `list` and `detail` actions.
+        This viewset automatically provides 'list' and 'detail' actions.
     """
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
