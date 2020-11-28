@@ -1,3 +1,9 @@
+"""
+ApiView is the base class for the api view . GenericAPIview extends the ApiView.
+The GenericAPIview contains the mixins and verbose which makes the works easier.
+
+Viewset have actions while ApiViews have the method attributes like get,put ,post etc
+"""
 from django.contrib.auth import login, logout
 from django.http import HttpResponse
 from django.http import JsonResponse
@@ -7,9 +13,9 @@ from rest_framework import generics
 from rest_framework import mixins
 from rest_framework import status
 from rest_framework import viewsets
-from rest_framework.authentication import SessionAuthentication, BasicAuthentication
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.models import Token
-from rest_framework.parsers import JSONParser
+from rest_framework.parsers import JSONParser, MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -79,7 +85,7 @@ class StockApiView(APIView):
 
 
 class StockApiViewDetail(APIView):
-    authentication_classes = [BasicAuthentication]
+    # authentication_classes = [BasicAuthentication]
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     def get_object(self, pk):
@@ -96,6 +102,9 @@ class StockApiViewDetail(APIView):
     def put(self, request, pk=None):
         instance = self.get_object(pk)
         data = request.data
+        # For put for patch we first provide the instance of the class as the first parameter then the data
+        # we want the the patch we provide the next argument partial is true
+        # like serializer = StockSerializer(instance, data={"created_by":user.id},)
         serializer = StockSerializer(instance, data=data)
         if serializer.is_valid():
             serializer.save()
@@ -122,7 +131,7 @@ class GenericStockView(generics.GenericAPIView,
     serializer_class = StockSerializer
     queryset = Stock.objects.all()
 
-    authentication_classes = [SessionAuthentication]
+    authentication_classes = [TokenAuthentication]
     permission_classes = [IsAuthenticated, IsAdminUser]
 
     # default lookup field is pk
@@ -157,7 +166,7 @@ class LoginApiView(APIView):
 
 
 class LogoutApiView(APIView):
-    authentication_classes = (SessionAuthentication,)
+    authentication_classes = (TokenAuthentication,)
 
     def post(self, request):
         logout(request)
@@ -165,11 +174,26 @@ class LogoutApiView(APIView):
 
 
 class StockViewSet(viewsets.ModelViewSet):
+    permission_classes = []
+    authentication_classes = []
     """
         This viewset automatically provides `list` and `detail` actions.
     """
     queryset = Stock.objects.all()
     serializer_class = StockSerializer
+    parser_classes = (JSONParser, FormParser, MultiPartParser)
+
+    # actions are used to link related fields
+    # @action(detail=True, methods=['Get'])
+    # def choice(self):
+    #     pass
+    def post(self, request):
+        serializer = StockSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        else:
+            return Response(serializer.errors, status=400)
 
 
 class StockDetailView(DetailView):
