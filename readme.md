@@ -1,6 +1,12 @@
 # Stock Rest API [DRF]:-
 This api is based on the django rest framework with token authenication factor. It has all the get , put, delete and post method.
 
+#### Features
+* Authenication
+* Dynamic with CRUD operation
+* Simple and Fast
+* Used Modelviewset
+
 
 <h4>Topics -> djangorestframework, python, webdevelopment, API</h4>
 
